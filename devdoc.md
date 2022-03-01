@@ -33,11 +33,9 @@ input_drug_is_rx
 Indications
 input_drug_indications
 
-备注：仿制药
+备注：无
 Note
 input_drug_note
-
-{1234554321:{trade_name:'泰尔丝', generic_name:'异维A酸软胶囊'}, 0987667890:{trade_name:'安体舒通', generic_name:'螺内酯片'}}
 
 商品名：一舒
 通用名：盐酸丁螺环酮片
@@ -47,16 +45,6 @@ input_drug_note
 每盒板数：5
 药物类型：处方药
 适应症：各种焦虑症
-备注：仿制药
-
-商品名：特维丝
-通用名：异维A酸胶囊
-生产厂家：东海制药
-每片含量：10mg
-每板片数：12
-每盒板数：2
-药物类型：处方药
-适应症：痤疮
 备注：
 
 商品名：维度新
@@ -68,48 +56,6 @@ input_drug_note
 药物类型：处方药
 适应症：抑郁症
 备注：
-
-商品名：
-通用名：
-生产厂家：
-每片含量：
-每板片数：
-每盒板数：
-药物类型：
-适应症：
-备注：
-
-商品名：
-通用名：
-生产厂家：
-每片含量：
-每板片数：
-每盒板数：
-药物类型：
-适应症：
-备注：
-
-商品名：
-通用名：
-生产厂家：
-每片含量：
-每板片数：
-每盒板数：
-药物类型：
-适应症：
-备注：
-
-商品名：
-通用名：
-生产厂家：
-每片含量：
-每板片数：
-每盒板数：
-药物类型：
-适应症：
-备注：
-
-{"ABC":{"in":3,"out":2},"BBA":{"in":3,"out":2},"BBA":{"in":3,"out":2}}
 
     /Library/Frameworks/Python.framework/Versions/3.10/bin/python3 /Users/jincheng/Documents/Developer/PythonDeveloper/HPMS/main.py
     请选择操作：(1.添加药品 2.删除药品 3.查看药品信息 4. 药品入库 5.药品出库 6.退出)3
