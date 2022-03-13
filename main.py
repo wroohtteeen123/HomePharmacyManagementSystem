@@ -66,6 +66,7 @@ def drug_info_add():  # 添加药品
 
     drug_pharmacy_add_d: dict = Bfile.read_json("pharmacy.hpms")  # 读取drug_info.hpms文件
     drug_add_pre: dict = Bfile.read_json("drug_info.hpms")  # 读取drug_info.hpms文件
+    drug_daily_set_d: dict = Bfile.read_json("daily_set.hpms")  # 读取drug_info.hpms文件
 
     is_random_drug_uid = input("是否随机生成药品uid？(y/n)")  # 输入是否随机生成药品uid
 
@@ -86,10 +87,12 @@ def drug_info_add():  # 添加药品
         uid_pre = input("请输入药品信息uid:")
 
     drug_add_pre[uid_pre] = {"trade_name": "", "generic_name": "", "manufacturer": "", "specification": 0,
-                             "tablets_per_package": 0, "packages_pre_box": 0, "is_rx": "", "indications": "",
-                             "note": ""}
+                            "tablets_per_package": 0, "packages_pre_box": 0, "is_rx": "", "indications": "",
+                            "note": ""}
 
     drug_pharmacy_add_d[uid_pre] = {"inbound": 0, "outbound": 0}
+
+    drug_daily_set_d[uid_pre] = {"daily_set": 0,}
 
     drug_add_pre[uid_pre]["trade_name"] = input("请输入药品名称(str):")
     drug_add_pre[uid_pre]["generic_name"] = input("请输入药品通用名(str):")
@@ -103,6 +106,7 @@ def drug_info_add():  # 添加药品
 
     Bfile.save_json("drug_info.hpms", drug_add_pre)  # 将drug_add_pre存入drug_info.hpms文件
     Bfile.save_json("pharmacy.hpms", drug_pharmacy_add_d)  # 将drug_pharmacy_add存入drug_info.hpms文件
+    Bfile.save_json("daily_set.hpms", drug_daily_set_d)  # 将drug_daily_set存入drug_info.hpms文件
 
     drug_info_print_all()
 
@@ -111,8 +115,14 @@ def drug_info_print_all():  # 打印所有药品信息
 
     dpa_tag = Bfile.read_json("drug_info.hpms")  # 读取drug_info.hpms文件
     dpa_p_tag = Bfile.read_json("pharmacy.hpms")  # 读取pharmacy.hpms文件
+    dpa_ds_tag = Bfile.read_json("daily_set.hpms")  # 读取daily_set.hpms文件
 
     for i in dpa_tag:  # 循环打印所有药品信息
+
+        tcc:int = 0 
+        pcc:int = 0
+        ucc:int = 0
+
         print("药品代号:", i, end="\t")  # 打印药品代号
         print("商品名:", dpa_tag[i]["trade_name"], end="\t")  # 打印商品名
         print("通用名:", dpa_tag[i]["generic_name"], end="\t")  # 打印通用名
@@ -126,13 +136,23 @@ def drug_info_print_all():  # 打印所有药品信息
         tcc = dpa_tag[i]["specification"] * dpa_tag[i]["tablets_per_package"] * dpa_tag[i]["packages_pre_box"]  # 计算总粒数
 
         if tcc < 1000:  # 如果总粒数小于1000
-            print("每盒总含量:", tcc, "毫克", end="\t")  # 打印每盒总含量
+            print("每盒含量:", tcc, "毫克", end="\t")  # 打印每盒总含量
 
         else:
             print("每盒总含量:", tcc / 1000, "克", end="\t")  # 打印每盒总含量
 
         print("适应症:", dpa_tag[i]["indications"], end="\t")  # 打印适应症
-        print("库存量:", dpa_p_tag[i]["inbound"] - dpa_p_tag[i]["outbound"], "盒")  # 打印库存量
+
+        pcc = dpa_p_tag[i]["inbound"] - dpa_p_tag[i]["outbound"]
+        
+        print("库存量:", pcc , "盒", end="\t")  # 打印库存量
+
+        if dpa_ds_tag[i]["daily_set"] == 0:  # 如果每日零售量不为0
+            pass
+
+        else:
+            ucc = (tcc * pcc) / dpa_ds_tag[i]["daily_set"]
+            print("库存可使用", ucc, "盒")
 
 
 def drug_info_delete():  # 删除药品
@@ -156,7 +176,7 @@ def drug_info_delete():  # 删除药品
 
 def user_pick():  # 用户选择
 
-    user_pick_input = input("请选择操作：(1.添加药品 2.删除药品 3.查看药品信息 4. 药品入库 5.药品出库 6.退出)")
+    user_pick_input = input("请选择操作：(1.添加药品 2.删除药品 3.查看药品信息 4. 药品入库 5.药品出库 6.设置每日用量 7.退出)")
     user_pick_input = int(user_pick_input)  # 将user_pick转换为int类型
 
     if user_pick_input == 1:
@@ -175,7 +195,8 @@ def user_pick():  # 用户选择
         drug_pharmacy_min()
 
     elif user_pick_input == 6:
-        print("退出系统")
+        drug_daily_set()
+    elif user_pick_input == 7:
         exit()
 
 
@@ -221,6 +242,29 @@ def drug_pharmacy_min():
     else:  # 如果输入的药品代号不在drug_pharmacy_min字典中
         print("没有找到该商品代号，请重新输入")  # 提示没有找到该商品代号
         drug_pharmacy_min()
+
+
+def drug_daily_set():  # 每日设置
+
+    drug_info_print_all()
+
+    drug_daily_set_d: dict = Bfile.read_json("daily_set.hpms")  # 读取drug_info.hpms文件
+
+    print("请输入要设置的药品代号：", end="")  # 输入要设置的药品代号
+    uid_pre = input()  # 获取输入的药品代号
+
+    if uid_pre in drug_daily_set_d:  # 如果输入的药品代号在drug_daily_set字典中
+        print("请输入每日摄入量：", end="")  # 输入要设置的药品数量
+        drug_daily_set_d[uid_pre]["daily_set"] = int(input())  # 将输入的药品数量加入drug_daily_set字典
+
+        Bfile.save_json("daily_set.hpms", drug_daily_set_d)  # 将drug_daily_set存入drug_info.hpms文件
+
+        print("设置成功")
+
+    else:  # 如果输入的药品代号不在drug_daily_set字典中
+        print("没有找到该商品代号，请重新输入")  # 提示没有找到该商品代号
+        drug_daily_set()
+
 
 
 # main
