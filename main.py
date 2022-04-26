@@ -144,15 +144,15 @@ def drug_info_print_all():  # 打印所有药品信息
         print("适应症:", dpa_tag[i]["indications"], end="\t")  # 打印适应症
 
         pcc = dpa_p_tag[i]["inbound"] - dpa_p_tag[i]["outbound"]
-        
+
         print("库存量:", pcc , "盒", end="\t")  # 打印库存量
 
         if dpa_ds_tag[i]["daily_set"] == 0:  # 如果每日零售量不为0
-            pass
+            print("")
 
         else:
             ucc = (tcc * pcc) / dpa_ds_tag[i]["daily_set"]
-            print("库存可使用", ucc, "盒")
+            print("库存可使用", ucc, "天")
 
 
 def drug_info_delete():  # 删除药品
